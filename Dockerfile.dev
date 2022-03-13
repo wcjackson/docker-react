@@ -1,19 +1,14 @@
-version: '3'
-services:
-  web:
-    build: 
-      context: .
-      dockerfile: Dockerfile.dev
-    ports:
-      - "3000:3000"
-    volumes:
-      - /home/node/app/node_modules
-      - .:/home/node/app
-  tests:
-    build: 
-      context: .
-      dockerfile: Dockerfile.dev
-    volumes:
-      - /home/node/app/node_modules
-      - .:/home/node/app
-    command: ["npm", "run", "test"]
+FROM node:16-alpine
+
+USER node
+
+RUN mkdir -p /home/node/app
+
+WORKDIR '/home/node/app'
+
+COPY --chown=node:node ./package.json ./
+RUN npm install
+
+COPY --chown=node:node ./ ./
+
+CMD ["npm", "run", "start"]
